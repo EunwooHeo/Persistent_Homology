@@ -1,45 +1,6 @@
 import numpy as np
-import glob
-import shutil
-import math
-import time
-import random
 from collections import defaultdict
 
-class convert_uppertriangle:
-    """
-    numpy 2d matrix를 numpy 2d uppertriangle matrix로 변환 시킨다.
-    """
-    def __init__(self):
-        self._matrix=np.array([])
-        self._uppermatrix=np.array([])
-        
-    @property
-    def matrix(self):
-        return self._matrix
-    
-    @matrix.setter
-    def matrix(self,matrix):
-        if len(matrix.shape) != 2:
-            raise Exception("The dimension of array must be 2")
-        else:
-            self._matrix=matrix
-
-    @property
-    def uppermatrix(self):
-        return self._uppermatrix
-    
-    def convert(self):
-        l=len(self._matrix)
-        for i in range(l):
-            tmp=self._matrix[i]
-            for j in range(l):
-                if i>j:
-                    tmp[j]=0
-            self._matrix[i]=tmp
-        self._uppermatrix=self._matrix
-
-        
 def vec_operation_mod_p(v,w,mod): #a를 b에다 더함 주의 (방향성 있음)
     n=mod
     a=v.copy()
@@ -318,76 +279,6 @@ def cycle1_index(show=None):
             print('C_{} : {}'.format(i,b))
     return Cycles
 
-def cycle1_eng(show=None):
-    """
-    english version의 cycle을 보기좋게 보여주는 코드
-    """
-    Cycles=[]
-    for i in range(1,len(cycle1)+1):
-        a=cycle_link(cycle1[i-1])
-        cycle_tmp=a[0][:-1]
-        cycle=[nodelist[j] for j in cycle_tmp]
-        Cycles.append(cycle)
-        if show ==True:
-            print('C_{} : {}'.format(i,cycle))
-    return Cycles
-
-def Overlapmatrix(Cycles, allnode,scale,normalized=False):
-    """
-    Cycles, allnode, nodelist, scale을 정해주면 overlapmatrix를 구해주는 코드
-    """
-    c=Cycles
-    cyc_len=[len(ci) for ci in c]
-    cyc_len_max=max(cyc_len)
-    matrix = []; 
-    for ci in c: 
-        row = []
-        for node in allnode:
-            if node in ci:
-                row.append(1)
-            else:
-                row.append(0)
-        matrix.append(row)
-    q=scale
-    mat = [];
-    for j,row in enumerate(matrix):
-        if normalized==True:
-            q=scale*cyc_len[j]/cyc_len_max         
-        new = []; leng = 0
-        for i,node in enumerate(row):
-            if node == 0:
-                if leng == 0:
-                    new.append(0)
-                else:
-                    if leng >= q:
-                        new += row[i-leng:i]+[0]
-                    else:
-                        new += [0]*leng+[0]
-                    leng = 0
-            else:
-                leng += 1
-        if leng != 0:
-            if leng >= q:
-                new += row[len(row)-leng:]
-            else:
-                new += [0]*leng
-        mat.append(new)
-    
-    return mat
-
-
-
-###정보의 계산
-def CalculateInfo(folder,songname,max_homology_dim,unit_beat_length=11520,inverse_edge_weight=True,weight_finding_path=True,vertex_weight=False):
-    info=PrepareInfo(folder,songname)
-    distmat,allnode, nodelist = analysis_from_info(info,unit_beat_length,inverse_edge_weight,weight_finding_path,vertex_weight)
-    matrix_index_dict,matrix_col_nonzero,simplex_value,R,D,V, low_R=Caculate_Vietoris_Ripscomplex_Standardalgorithm(distmat,max_homology_dim)
-    Cycles=cycle1_eng()
-    overlapmatrix=Overlapmatrix(Cycles, allnode,scale=4)
-    result={'songname':songname,'distmat':distmat,'allnode':allnode, 'nodelist':nodelist,'Cycles':Cycles,'overlapmatrix':overlapmatrix,'matrix_index_dict':matrix_index_dict,'matrix_col_nonzero':matrix_col_nonzero,'simplex_value':simplex_value,'R':R,'D':D,'V':V, 'low_R':low_R}
-    
-    return result
-
 
 ###정보의 표시
 def Show_barcode(homology_dimension=None,expression='index'):
@@ -416,8 +307,6 @@ def Show_barcode(homology_dimension=None,expression='index'):
             death = L[0][1]
             if expression == 'index':
                 Cycles=cycle1_index()
-            elif expression == 'english':
-                Cycles=cycle1_eng()
             cycle=Cycles[i]
             print(f'B{i+1}= [{round(birth,2)},{round(death,2)}) : {cycle}')
     if 2 in dim_list:
