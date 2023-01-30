@@ -10,3 +10,10 @@ It has a great advantage of being written and shared in Python language.
 If you want to try to run this code, open file “Tutorial_for_Calculate_barcode_RipsComplex.ipynb” and run it.
 
 From the distance matrix, we can calculate the barcode using the Vietoris-Rips complex.
+
+
+(C) Eunwoo Heo - hew0920@postech.ac.kr
+    POSTECH(POHANG UNIVERSITY OF SCIENCE AND TECHNOLOGY)
+    
+Created 2022 Sep 10
+edited 2023 Jan 31
